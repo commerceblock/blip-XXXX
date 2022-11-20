@@ -36,6 +36,8 @@ A Zero-conf Channel will have the following attributes:
 
 Construction of a Zeroconf State Channel will be as follow:
 
-## Universality
+## Backwards Compatibility
+
+The Zeroconf State Channel protocol is not backwards compatible.
 
 ## Reference Implementation
