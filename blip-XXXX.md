@@ -34,6 +34,8 @@ A Zero-conf Channel will have the following attributes:
 
 ## Specification
 
+Construction of a Zeroconf State Channel will be as follow:
+
 ## Universality
 
 ## Reference Implementation
