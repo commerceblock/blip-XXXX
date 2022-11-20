@@ -13,6 +13,10 @@ Document decribes how a Poon-Dryja lightning channel can be constructed without 
 
 ## Motivation
 
+Bringing together these two protocols/approaches you get two benefits.
+1. Capability to “enrol” a once fixed-size state coin UTXO.
+2. The ability of transporting the lightning channel off-chain at any time.
+
 ## Rationale
 
 ## Specification
