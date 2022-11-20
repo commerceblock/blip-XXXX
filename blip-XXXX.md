@@ -4,7 +4,7 @@ Title: Zero-conf Statecoin Channels
 Status: Draft
 Author: 
 Created: 2022-XX-XX
-License: CC0
+License: GPL 3.0
 ```
 
 ## Abstract
