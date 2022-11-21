@@ -31,6 +31,7 @@ A Zero-conf Channel will have the following attributes:
 3. Cooperative closure of the channel with or without the SE will require the timelock to expire.
 4. Periodic updates of the peg-out transaction to reflect the exact amount each party is owed.
 5. Each update to the peg-out transaction will result in the timelock being decremented.
+6. Optimistically generated pre-signed peg-out transaction signed by both parties that have no timelock.
 
 ## Specification
 
