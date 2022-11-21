@@ -32,6 +32,7 @@ A Zero-conf Channel will have the following attributes:
 4. Periodic updates of the peg-out transaction to reflect the exact amount each party is owed.
 5. Each update to the peg-out transaction will result in the timelock being decremented.
 6. Optimistically generated pre-signed peg-out transaction signed by both parties that have no timelock.
+7. Checks to ensure a user pushes funds to one side of the channel inorder for the channel to be closed.
 
 ## Specification
 
