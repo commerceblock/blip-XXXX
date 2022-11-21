@@ -53,3 +53,5 @@ establishing such a channel to support it, and they connect to each other direct
 The Zeroconf State Channel protocol is not backwards compatible.
 
 ## Reference Implementation
+
+[Original Statechains Paper]: https://github.com/RubenSomsen/rubensomsen.github.io/blob/master/img/statechains.pdf
