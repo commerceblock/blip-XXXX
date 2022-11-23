@@ -9,11 +9,11 @@ License: GPL 3.0
 
 ## Abstract
 
-Document decribes how a Poon-Dryja lightning channel can be constructed without reliance upon on-chain transactions, using the statechain approach as implemented in MercuryWallet.  This approach will not require any changes lightning network and would need only simple enhancements to MercuryWallet statechain API.
+This document decribes how a Poon-Dryja lightning channel can be constructed without reliance upon on-chain transactions, using the statechain approach as implemented in MercuryWallet.  This approach will not require any changes to the lightning network protocol and would need only simple enhancements to the MercuryWallet statechain API.
 
 ## Motivation
 
-The MercuryWallet statechain system fascilitates the transfer of ownership of Bitcoin (or Elements based) unspent transaction outputs (UTXOs) between parties without performing on-chain transactions.
+The MercuryWallet statechain system facilitates the transfer of ownership of Bitcoin (or Elements based) unspent transaction outputs (UTXOs) between parties without performing on-chain transactions. This is acheieved by sharing the single key of the UTXO between the owner and a statechain entity (SE), and providing a time-locked backup transaction that returns the UTXO to the full custody of the owner.  
 
 Bringing together these two protocols/approaches you get two benefits.
 1. Capability to “enrol” a once fixed-size state coin UTXO.
@@ -36,11 +36,27 @@ A Zero-conf Channel will have the following attributes:
 
 ## Specification
 
-Construction of a Zeroconf State Channel will be as follow:
+Construction of a Zeroconf State Channel (ZSC) will be as follow:
 
         +-----+                  +-----+
         |     |                  |     |
         
+
+The following sequence specifies the process of the creation and closing of the 'state channel':
+
+1. A statecoin is deposited by Alice (A) with the SE. A has one keyshare (`S_A`) and the SE has the other (`S_SE`) - the full private key is `S_A*S_SE`. The SE and A cooperate the co-sign Alice's backup transaction with an `nLocktime` of blockheight `b0`. 
+2. A finds channel counterparty Bob (B) that supports `option_zeroconf_state_channel`
+3. A and B generate secrets `A_T` and `B_T`
+4. A and B interact to generate a shared secret, `T` (where `T = A_T*B_T`). 
+5. A and B share `A_T.G`, `B_T` and `T.G` with the SE
+6. A and the SE cooperatively generate a timelocked ZSC peg-out transaction (authorised by B). 
+7. A and B generate a ZSC peg-out transaction with no timelock. 
+8. A, B and the SE complete the statecoin transfer to `SE+T`. 
+9. A and B can now announce the channel open to the network. In the `open_channel` message the `temporary_channel_id` should specify the timelocked peg-out transaction and the `open_channel_tlvs` must reflect that this channel is an `option_zeroconf_state_channel`. 
+
+At any time, A or B can request the SE to sign the peg-out transaction with no timelock. In the event that a non-timelocked peg-out transaction is broadcast to the network, Alice or Bob must specify the new channel outpoint in the `funding_created` message, as the `txid` has has changed.
+
+In the event that Alice and Bob wish to virtually close their ZSC (and all funds have been pushed to B side of the channel), A and B can sign a statecoin transfer message with `A_T` and `B_T`. Once the SE has validated this message, the statecoin can be transferred from `SE+T` to `SE+B` using the normal statecoin transfer protocol. When B verified the transfer, B announces the closure of the `SE+T` ZSC to the public lightning network. 
 
 ## Universality
 
