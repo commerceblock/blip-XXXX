@@ -11,7 +11,7 @@ License: GPL 3.0
 
 ## Abstract
 
-This document decribes how a Poon-Dryja lightning channel can be constructed without reliance upon on-chain transactions, using the statechain approach as implemented in MercuryWallet.  This protocol will not require any changes to the lightning network protocol and would need only simple enhancements to the MercuryWallet statechain API.
+This document decribes how a Poon-Dryja lightning channel (lightning network) can be constructed without reliance upon on-chain transactions, using the statechain approach as implemented in MercuryWallet.  This protocol will not require any changes to the lightning network protocol and would need only simple enhancements to the MercuryWallet statechain API.
 
 ## Motivation
 
