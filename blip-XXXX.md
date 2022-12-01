@@ -1,6 +1,6 @@
 ```
 bLIP: XXXX
-Title: Zero-conf Statecoin Channels
+Title: StateChannels
 Status: Draft
 Author: Nicholas Gregory <nicholas@commerceblock.com> 
      Ruben Somsen <rsomsen@gmail.com>
@@ -53,7 +53,7 @@ At any time, A and B can request the SE to co-sign peg-out transaction with no t
 
 In the event that Alice and Bob wish to virtually close their statechannel (and all funds have been pushed to one side of the channel), A and B can sign a statecoin transfer message with `A_T` and `B_T`. Once the SE has validated this message, the statecoin can be transferred from to `SE+A` or `SE+B` using the normal statecoin transfer protocol. When the receiver verified the transfer, they announce the closure of the `SE+T` ZSC to the public lightning network. 
 
-Zeroconf State Channel (ZSC) steps:
+State Channel (SC) steps:
 
 ```
      _______           S_A*S_SE              _____________
@@ -77,7 +77,7 @@ Zeroconf State Channel (ZSC) steps:
      _______                                                                               _______ 
     |       |                                                                             |       |
     |       |                                                                             |       |
-    |   A   |<--------------------------------------------------------------------------->|   B   |     <- update zeroconf_state_channel
+    |   A   |<--------------------------------------------------------------------------->|   B   |     <- update state_channel
     |       |                                                                             |       |
     |_______|                                                                             |_______|   
     
@@ -92,13 +92,13 @@ Zeroconf State Channel (ZSC) steps:
 
 ## Universality
 
-Most nodes are probably not interested in Zeroconf State Channel, but that is fine since
+Most nodes are probably not interested in State Channels, but that is fine since
 for the approach to be useful only two parties are needed to be interested in
 establishing such a channel to support it, and they connect to each other directly.
 
 ## Backwards Compatibility
 
-The Zeroconf State Channel protocol is not backwards compatible.
+The State Channel protocol is not backwards compatible.
 
 ## Acknowledgements
 
