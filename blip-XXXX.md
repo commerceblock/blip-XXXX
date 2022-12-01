@@ -102,6 +102,8 @@ The Zeroconf State Channel protocol is not backwards compatible.
 
 ## Acknowledgements
 
+Antoine Riard & Shinobi 
+
 ## Reference Implementation
 
 [Original Statechains Paper]: https://github.com/RubenSomsen/rubensomsen.github.io/blob/master/img/statechains.pdf
