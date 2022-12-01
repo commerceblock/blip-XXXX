@@ -2,7 +2,9 @@
 bLIP: XXXX
 Title: Zero-conf Statecoin Channels
 Status: Draft
-Author: 
+Author: Nicholas Gregory <nicholas@commerceblock.com> 
+     Ruben Somsen <rsomsen@gmail.com>
+     Tom Trevethan <tom@commerceblock.com> 
 Created: 2022-XX-XX
 License: GPL 3.0
 ```
