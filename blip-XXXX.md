@@ -102,7 +102,7 @@ The Zeroconf State Channel protocol is not backwards compatible.
 
 ## Acknowledgements
 
-Antoine Riard & Shinobi 
+Special thank you to Antoine Riard & Shinobi for reviewing and provided feedback for this proposal.
 
 ## Reference Implementation
 
