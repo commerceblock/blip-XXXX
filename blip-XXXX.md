@@ -30,26 +30,25 @@ This BLIP focuses on the model where a lightning channel is created inside a sta
 A 'statechannel' will then have the following attributes:
 1. The state chain peg-out (withdrawal or backup) transaction will open a lightning channel.
 2. The lightning channel will be timelocked.
-3. Closure of the channel without SE cooperation will require the timelock to expire.
-4. Periodic updates of the peg-out transaction to reflect the exact amount each party is owed.
-5. Each update to the peg-out transaction will result in the timelock being decremented.
-6. A peg-out transaction without timelock can cooperatively signed with the SE but must be authorised by both parties (agreeing channel balance). 
-7. The statecoin can be transferred to a new owner off-chain (Alice or Bob) if either one has the full channel balance. 
+3. Closure of the channel without SE cooperation will require the timelock to expire (i.e. the backup tx to be confirmed).
+4. Each update to the peg-out transaction will result in the timelock being decremented.
+5. A peg-out transaction without timelock can cooperatively signed with the SE but must be authorised by both parties (agreeing channel balance). The SE is trusted to enforce this. 
+6. The statecoin can be transferred to a new owner off-chain (Alice or Bob) if either one has the full channel balance. 
 
 ## Specification
 
 The following sequence specifies the process of the creation and closing of the 'state channel':
 
-1. A statecoin is deposited by Alice (A) with the SE. A has one keyshare (`S_A`) and the SE has the other (`S_SE`) - the full private key is `S_A*S_SE`. The SE and A cooperate the co-sign Alice's backup transaction with an `nLocktime` of blockheight `b0`. 
+1. A statecoin is deposited by Alice (A) with the SE. A has one keyshare (`S_A`) and the SE has the other (`S_SE`) - the full private key is `S_A*S_SE`. The SE and A cooperate the co-sign (via 2 party ECDSA) Alice's backup transaction with an `nLocktime` of blockheight `b0`. 
 2. A finds channel counterparty Bob (B) that supports `option_state_channel`. 
 3. A and B generate secrets `A_T` and `B_T`
 4. A and B interact to generate a shared secret, `T` via Diffie-Helman key exchange (using `A_T` and `B_T`). 
 5. A and B share the public values `A_T.G`, `B_T.G` and `T.G` with the SE (where `G` is the secp256k1 generator point). These are used to authenticate SE co-signing. 
-6. A and the SE cooperatively generate the statechannel peg-out transaction (authorised by B, signing with `B_T`) with an `nLocktime` of `b0 - d` (where `d` is the decrement value). This transaction creates the channel (i.e. is a 2-of-2 multisig output for `A_T.G`, `B_T.G`). 
+6. A and the SE cooperatively generate the statechannel peg-out transaction (which is authorised by B) with an `nLocktime` of `b0 - d` (where `d` is the decrement value). This transaction creates the channel (i.e. is a 2-of-2 multisig output for `A_T.G`, `B_T.G`). 
 7. A, B and the SE complete the statecoin transfer (i.e. the SE key share is updated to combine with `T`). 
-9. A and B can now announce the channel open to the network. In the `open_channel` message the `temporary_channel_id` should specify the timelocked peg-out transaction and the `open_channel_tlvs` must reflect that this channel is an `option_state_channel`. 
+8. A and B can now announce the channel open to the network. In the `open_channel` message the `temporary_channel_id` should specify the timelocked peg-out transaction and the `open_channel_tlvs` must reflect that this channel is an `option_state_channel`. 
 
-At any time, A and B can request the SE to co-sign peg-out transaction with no timelock. The SE ensures both authorise the output addresses and amounts. In the event that a non-timelocked peg-out transaction is broadcast to the network, Alice or Bob must specify the new channel outpoint in the `funding_created` message, as the `txid` has has changed.
+At any time, A and B can request the SE to co-sign peg-out transaction with no timelock. The SE ensures both A and B authorise the output addresses and amounts. In the event that a non-timelocked peg-out transaction is broadcast to the network, Alice or Bob must specify the new channel outpoint in the `funding_created` message, as the `txid` has has changed.
 
 In the event that Alice and Bob wish to virtually close their statechannel (and all funds have been pushed to one side of the channel), A and B can sign a statecoin transfer message with `A_T` and `B_T`. Once the SE has validated this message, the statecoin can be transferred from to `SE+A` or `SE+B` using the normal statecoin transfer protocol. When the receiver verified the transfer, they announce the closure of the `SE+T` ZSC to the public lightning network. 
 
