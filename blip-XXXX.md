@@ -50,7 +50,7 @@ The following sequence specifies the process of the creation and closing of the 
 
 At any time, A and B can request the SE to co-sign peg-out transaction with no timelock. The SE ensures both A and B authorise the output addresses and amounts. In the event that a non-timelocked peg-out transaction is broadcast to the network, Alice or Bob must specify the new channel outpoint in the `funding_created` message, as the `txid` has has changed.
 
-In the event that Alice and Bob wish to virtually close their statechannel (and all funds have been pushed to one side of the channel), A and B can sign a statecoin transfer message with `A_T` and `B_T`. Once the SE has validated this message, the statecoin can be transferred from to `SE+A` or `SE+B` using the normal statecoin transfer protocol. When the receiver verified the transfer, they announce the closure of the `SE+T` ZSC to the public lightning network. 
+In the event that Alice and Bob wish to virtually close their statechannel (and all funds have been pushed to one side of the channel), A and B can sign a statecoin transfer message with `A_T` and `B_T`. Once the SE has validated this message, the statecoin can be transferred from to `SE+A` or `SE+B` using the normal statecoin transfer protocol. When the receiver verified the transfer, they announce the closure of the `SE+T` SC to the public lightning network. 
 
 State Channel (SC) steps:
 
