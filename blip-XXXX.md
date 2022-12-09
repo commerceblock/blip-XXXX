@@ -32,16 +32,16 @@ A 'statechannel' will then have the following attributes:
 2. The lightning channel will be timelocked.
 3. Closure of the channel without SE cooperation will require the timelock to expire (i.e. the backup tx to be confirmed).
 4. Each update to the peg-out transaction will result in the timelock being decremented.
-5. A peg-out transaction without timelock can cooperatively signed with the SE but must be authorised by both parties (agreeing channel balance). The SE is trusted to enforce this. 
+5. A peg-out transaction without timelock can be cooperatively signed with the SE but must be authorised by both parties (agreeing channel balance). The SE is trusted to enforce this. 
 6. The statecoin can be transferred to a new owner off-chain (Alice or Bob) if either one has the full channel balance. 
 
 ## Specification
 
 The following sequence specifies the process of the creation and closing of the 'state channel':
 
-1. A statecoin is deposited by Alice (A) with the SE. A has one keyshare (`S_A`) and the SE has the other (`S_SE`) - the full private key is `S_A*S_SE`. The SE and A cooperate the co-sign (via 2 party ECDSA) Alice's backup transaction with an `nLocktime` of blockheight `b0`. 
+1. A statecoin is deposited by Alice (A) with the SE. A has one keyshare (`S_A`) and the SE has the other (`S_SE`) - the full private key is `S_A*S_SE`. The SE and A cooperate to co-sign (via 2 party ECDSA) Alice's backup transaction with an `nLocktime` of blockheight `b0`. 
 2. A finds channel counterparty Bob (B) that supports `option_state_channel`. 
-3. A and B generate secrets `A_T` and `B_T`
+3. A and B generate secrets `A_T` and `B_T` respectively. 
 4. A and B interact to generate a shared secret, `T` via Diffie-Helman key exchange (using `A_T` and `B_T`). 
 5. A and B share the public values `A_T.G`, `B_T.G` and `T.G` with the SE (where `G` is the secp256k1 generator point). These are used to authenticate SE co-signing. 
 6. A and the SE cooperatively generate the statechannel peg-out transaction (which is authorised by B) with an `nLocktime` of `b0 - d` (where `d` is the decrement value). This transaction creates the channel (i.e. is a 2-of-2 multisig output for `A_T.G`, `B_T.G`). 
@@ -58,33 +58,39 @@ State Channel (SC) steps:
      _______           S_A*S_SE              _____________
     |       |<----------------------------->|             |
     |       |          backup_tx (S_A)      |             |
-    |   A   |<------------------------------|     SE      |       <-  A deposit statecoin
+    |   A   |<----------------------------->|     SE      |       <-  A deposit statecoin
     |       |          nLocktime = b0       |             |
-    |_______|<------------------------------|             |
-                                            |             |
-                                            |             |
-     _______             T*S_SE             |             |              T*S_SE            _______ 
-    |       |<----------------------------->|             |<----------------------------->|       |
-    |       |        peg-out (channel)      |             |           peg-out (channel)   |       |
-    |   A   |<------------------------------|             |------------------------------>|   B   |      <- create state_channel
-    |       |      nLocktime = b0 - d       |             |       nLocktime = b0 - d      |       |
-    |       |<------------------------------|_____________|------------------------------>|       |
+    |_______|                               |_____________|
+    
+                                
+                                
+     _______                                     A_T.G                                     _______ 
+    |       |---------------------------------------------------------------------------->|       |
+    |       |                                    B_T.G                                    |       |
+    |   A   |<----------------------------------------------------------------------------|   B   |     <- Create shared secret (T)
+    |       |                                T = A_T*B_T.G                                |       |
+    |       |<--------------------------------------------------------------------------->|       |
     |       |                                                                             |       |
-    |_______|                                                                             |_______|    
+    |       |             A_T.G              _____________             B_T.G              |       |
+    |       |------------------------------>|             |<------------------------------|       |
+    |       |        backup_tx (A+B)        |             |         backup_tx (A+B)       |       |     <- create state_channel (S_SE*T)
+    |       |<----------------------------->|     SE      |<----------------------------->|       |
+    |       |        nLocktime = b0 - d     |             |         nLocktime = b0 - d    |       |
+    |_______|                               |_____________|                               |_______|
     
     
      _______                                                                               _______ 
     |       |                                                                             |       |
-    |       |                                                                             |       |
+    |       |                                     A+B                                     |       |
     |   A   |<--------------------------------------------------------------------------->|   B   |     <- update state_channel
     |       |                                                                             |       |
     |_______|                                                                             |_______|   
     
                                 
-     _______           Sig(A_T)              _____________            Sig(B_T)             _______ 
+     _______          Auth Sig(A_T)          _____________           Auth Sig(B_T)         _______ 
     |       |------------------------------>|             |<------------------------------|       |
-    |       |          Sig peg out          |             |           Sig peg out.        |       |
-    |   A   |<------------------------------|     SE      |------------------------------>|   B   |      <- close state_channel
+    |       |          Sig (S_SE+T)         |             |           Sig (S_SE+T)        |       |
+    |   A   |<----------------------------->|     SE      |<----------------------------->|   B   |      <- close state_channel
     |       |                               |             |                               |       |
     |_______|                               |_____________|                               |_______|
 ```
